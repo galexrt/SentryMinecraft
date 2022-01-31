@@ -29,7 +29,8 @@ class ForwardingSentryClient extends SentryClient {
     }
 
     private SentryClient determineClient(SentryStackTraceElement[] stackTrace) {
-        if (stackTrace == null) return defaultClient;
+        if (stackTrace == null)
+            return defaultClient;
 
         SentryClient apiClient = null;
         SentryClient client = null;
@@ -38,15 +39,19 @@ class ForwardingSentryClient extends SentryClient {
             boolean apiClass = apiClasses.contains(element.getModule());
             try {
                 ClassLoader loader = Class.forName(element.getModule()).getClassLoader();
-                if(apiClass) apiClient = getClient(loader);
-                else client = getClient(loader);
+                if (apiClass)
+                    apiClient = getClient(loader);
+                else
+                    client = getClient(loader);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (client != null) break;
+            if (client != null)
+                break;
         }
 
-        if(client == null) client = apiClient;
+        if (client == null)
+            client = apiClient;
         return client != null ? client : defaultClient;
     }
 
@@ -59,12 +64,15 @@ class ForwardingSentryClient extends SentryClient {
     public void sendEvent(Event event) {
         SentryStackTraceElement[] stackTrace = null;
         if (event.getSentryInterfaces().containsKey(ExceptionInterface.EXCEPTION_INTERFACE))
-            stackTrace = ((ExceptionInterface) event.getSentryInterfaces().get(ExceptionInterface.EXCEPTION_INTERFACE)).getExceptions().getFirst().getStackTraceInterface().getStackTrace();
+            stackTrace = ((ExceptionInterface) event.getSentryInterfaces().get(ExceptionInterface.EXCEPTION_INTERFACE))
+                    .getExceptions().getFirst().getStackTraceInterface().getStackTrace();
         if (stackTrace == null && event.getSentryInterfaces().containsKey(StackTraceInterface.STACKTRACE_INTERFACE))
-            stackTrace = ((StackTraceInterface) event.getSentryInterfaces().get(StackTraceInterface.STACKTRACE_INTERFACE)).getStackTrace();
+            stackTrace = ((StackTraceInterface) event.getSentryInterfaces()
+                    .get(StackTraceInterface.STACKTRACE_INTERFACE)).getStackTrace();
 
         SentryClient client = determineClient(stackTrace);
-        if (client == null) throw new RuntimeException("No default sentry client available!");
+        if (client == null)
+            throw new RuntimeException("No default sentry client available!");
         client.sendEvent(event);
     }
 
@@ -74,33 +82,40 @@ class ForwardingSentryClient extends SentryClient {
         Event event = eventBuilder.getEvent();
         SentryStackTraceElement[] stackTrace = null;
         if (event.getSentryInterfaces().containsKey(ExceptionInterface.EXCEPTION_INTERFACE))
-            stackTrace = ((ExceptionInterface) event.getSentryInterfaces().get(ExceptionInterface.EXCEPTION_INTERFACE)).getExceptions().getFirst().getStackTraceInterface().getStackTrace();
+            stackTrace = ((ExceptionInterface) event.getSentryInterfaces().get(ExceptionInterface.EXCEPTION_INTERFACE))
+                    .getExceptions().getFirst().getStackTraceInterface().getStackTrace();
         if (stackTrace == null && event.getSentryInterfaces().containsKey(StackTraceInterface.STACKTRACE_INTERFACE))
-            stackTrace = ((StackTraceInterface) event.getSentryInterfaces().get(StackTraceInterface.STACKTRACE_INTERFACE)).getStackTrace();
+            stackTrace = ((StackTraceInterface) event.getSentryInterfaces()
+                    .get(StackTraceInterface.STACKTRACE_INTERFACE)).getStackTrace();
 
         SentryClient client = determineClient(stackTrace);
-        if (client == null) throw new RuntimeException("No default sentry client available!");
+        if (client == null)
+            throw new RuntimeException("No default sentry client available!");
         client.sendEvent(eventBuilder);
     }
 
     @Override
     public void sendMessage(String message) {
         SentryClient client = determineClient(null);
-        if (client == null) throw new RuntimeException("No default sentry client available!");
+        if (client == null)
+            throw new RuntimeException("No default sentry client available!");
         client.sendMessage(message);
     }
 
     @Override
     public void sendException(Throwable throwable) {
-        SentryClient client = determineClient(new ExceptionInterface(throwable).getExceptions().getFirst().getStackTraceInterface().getStackTrace());
-        if (client == null) throw new RuntimeException("No default sentry client available!");
+        SentryClient client = determineClient(
+                new ExceptionInterface(throwable).getExceptions().getFirst().getStackTraceInterface().getStackTrace());
+        if (client == null)
+            throw new RuntimeException("No default sentry client available!");
         client.sendException(throwable);
     }
 
     @Override
     public void runBuilderHelpers(EventBuilder eventBuilder) {
         SentryClient client = determineClient(null);
-        if (client == null) throw new RuntimeException("No default sentry client available!");
+        if (client == null)
+            throw new RuntimeException("No default sentry client available!");
         client.runBuilderHelpers(eventBuilder);
     }
 
@@ -117,7 +132,8 @@ class ForwardingSentryClient extends SentryClient {
     @Override
     public List<EventBuilderHelper> getBuilderHelpers() {
         SentryClient client = determineClient(null);
-        if (client == null) throw new RuntimeException("No default sentry client available!");
+        if (client == null)
+            throw new RuntimeException("No default sentry client available!");
         return client.getBuilderHelpers();
     }
 
@@ -253,6 +269,7 @@ class ForwardingSentryClient extends SentryClient {
         return pluginClients.get(loader);
     }
 
+    @SuppressWarnings("rawtypes")
     static void addAPIClass(Class clazz) {
         String qualifiedClassName = clazz.getSimpleName();
         Class outerClass = clazz.getEnclosingClass();

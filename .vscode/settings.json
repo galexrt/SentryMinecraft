@@ -1,0 +1,6 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "yaml.schemas": {
+        "https://json.schemastore.org/bungee-plugin.json": "${workspaceFolder}/bungeecord/src/main/resources/plugin.yml"
+    }
+}

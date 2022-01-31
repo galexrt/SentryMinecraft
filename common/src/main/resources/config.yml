@@ -1,3 +1,2 @@
 default-dsn: ""
 server-name: ""
-use-builtin-handlers: true
