@@ -1,55 +1,47 @@
 package me.theminecoder.minecraft.sentry;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import io.sentry.Sentry;
-import io.sentry.SentryClient;
-import io.sentry.SentryClientFactory;
+import io.sentry.SentryLevel;
 
 public class SentryMinecraft {
 
-    private static ForwardingSentryClient forwardingSentryClient;
-
-    public static void init(ClassLoader loader, String dsn) {
-        SentryMinecraft.init(loader, dsn, SentryConfigurationOptions.Builder.create().build());
+    public enum Level {
+        DEBUG,
+        INFO,
+        WARNING,
+        ERROR,
+        FATAL
     }
 
-    public static void init(ClassLoader loader, String dsn, SentryConfigurationOptions options) {
-        if (options.getEnvironment() != null && !dsn.contains("environment")) {
-            dsn += (dsn.contains("?") ? "&" : "?") + "environment=" + options.getEnvironment();
-        }
-        if (options.getRelease() != null && !dsn.contains("release")) {
-            dsn += (dsn.contains("?") ? "&" : "?") + "release=" + options.getRelease();
-        }
-        if (options.getServerName() != null && !dsn.contains("servername")) {
-            dsn += (dsn.contains("?") ? "&" : "?") + "servername=" + options.getServerName();
-        }
-
-        if (!dsn.contains("uncaught.handler.enabled")) {
-            dsn += (dsn.contains("?") ? "&" : "?") + "uncaught.handler.enabled=" + options.isDefaultClient();
-        }
-
-        SentryClient client = SentryClientFactory.sentryClient(dsn);
-
-        if (forwardingSentryClient == null) {
-            Sentry.setStoredClient(forwardingSentryClient = new ForwardingSentryClient());
-        }
-
-        ForwardingSentryClient.registerClient(loader, client);
-        if (options.isDefaultClient()) {
-            ForwardingSentryClient.setDefaultClient(client);
-        }
+    public static void init(String dsn, String serverName, Map<String, String> tags) {
+        Sentry.init(options -> {
+            options.setDsn(dsn);
+            options.setAttachServerName(true);
+            options.setDiagnosticLevel(SentryLevel.ERROR);
+            options.setTag("server-name", serverName);
+            for (Entry<String, String> tag : tags.entrySet()) {
+                options.setTag(tag.getKey(), tag.getValue());
+            }
+        });
     }
 
-    @SuppressWarnings("rawtypes")
-    public static void addAPIClass(Class... classes) {
-        for (Class clazz : classes) {
-            ForwardingSentryClient.addAPIClass(clazz);
-        }
+    public static void captureException(Throwable e) {
+        Sentry.captureException(e);
     }
 
-    public static void sendIfActive(Throwable e) {
-        SentryClient client = Sentry.getStoredClient();
-        if (client != null)
-            client.sendException(e);
+    public static void captureException(Throwable e, Object hint) {
+        Sentry.captureException(e, hint);
+    }
+
+    public static void captureMessage(String message) {
+        Sentry.captureMessage(message);
+    }
+
+    public static void captureMessage(String message, Level level) {
+        Sentry.captureMessage(message, SentryLevel.valueOf(level.name()));
     }
 
 }

@@ -4,11 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.github.waterfallmc.waterfall.event.ProxyExceptionEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 
 public final class SentryMinecraftBungeecord extends Plugin implements Listener {
@@ -30,12 +34,15 @@ public final class SentryMinecraftBungeecord extends Plugin implements Listener 
 
         loadConfig();
 
-        SentryMinecraft.init(ClassLoader.getSystemClassLoader(), getConfig().getString("default-dsn"),
-                SentryConfigurationOptions.Builder.create()
-                        .withServerName(getConfig().getString("server-name", "Unknown Server")
-                                .replace(" ", "+"))
-                        .asDefaultClient()
-                        .build());
+        Map<String, String> tags = new HashMap<>();
+        Configuration tagsSection = getConfig().getSection("tags");
+        for (String key : getConfig().getSection("tags").getKeys()) {
+            tags.put(key, tagsSection.getString(key));
+        }
+
+        SentryMinecraft.init(getConfig().getString("default-dsn"),
+                getConfig().getString("server-name", "Unknown Server").replace(" ", "+"),
+                tags);
     }
 
     @Override
@@ -57,7 +64,7 @@ public final class SentryMinecraftBungeecord extends Plugin implements Listener 
             e = e.getCause();
         }
         Throwable finalE = e;
-        getProxy().getScheduler().runAsync(this, () -> SentryMinecraft.sendIfActive(finalE));
+        getProxy().getScheduler().runAsync(this, () -> SentryMinecraft.captureException(finalE));
     }
 
     private void loadConfig() {
@@ -72,6 +79,13 @@ public final class SentryMinecraftBungeecord extends Plugin implements Listener 
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        try {
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException exc) {
+            getLogger().severe(exc.getMessage());
+            this.enabled = false;
         }
     }
 

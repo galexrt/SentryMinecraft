@@ -9,6 +9,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public final class SentryMinecraftSpigot extends JavaPlugin {
@@ -26,13 +28,16 @@ public final class SentryMinecraftSpigot extends JavaPlugin {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            SentryMinecraft.init(ClassLoader.getSystemClassLoader(), getConfig().getString("default-dsn"),
-                    SentryConfigurationOptions.Builder.create()
-                            .withServerName(properties
-                                    .getProperty("server-id", getConfig().getString("server-name", "Unknown Server"))
-                                    .replace(" ", "+"))
-                            .asDefaultClient()
-                            .build());
+
+            Map<String, String> tags = new HashMap<>();
+            for (Map.Entry<String, Object> entry : getConfig().getConfigurationSection("tags").getValues(false)
+                    .entrySet()) {
+                tags.put(entry.getKey(), entry.getValue().toString());
+            }
+
+            SentryMinecraft.init(getConfig().getString("default-dsn"), properties
+                    .getProperty("server-id", getConfig().getString("server-name", "Unknown Server"))
+                    .replace(" ", "+"), tags);
         }
     }
 
@@ -59,7 +64,7 @@ public final class SentryMinecraftSpigot extends JavaPlugin {
         }
         Throwable finalE = e;
         getServer().getScheduler().runTaskAsynchronously(SentryMinecraftSpigot.this,
-                () -> SentryMinecraft.sendIfActive(finalE));
+                () -> SentryMinecraft.captureException(finalE));
     }
 
 }
