@@ -4,11 +4,11 @@
 
     <parent>
         <groupId>me.theminecoder.minecraft</groupId>
-        <artifactId>sentry-minecraft</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <artifactId>SentryMinecraft</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sentry-minecraft-common</artifactId>
+    <artifactId>SentryMinecraft-Common</artifactId>
 
     <dependencies>
         <dependency>

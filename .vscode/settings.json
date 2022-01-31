@@ -1,6 +1,6 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
     "yaml.schemas": {
-        "https://json.schemastore.org/bungee-plugin.json": "${workspaceFolder}/bungeecord/src/main/resources/plugin.yml"
+        "https://json.schemastore.org/bungee-plugin.json": "${workspaceFolder}/SentryMinecraft-Bungee/src/main/resources/plugin.yml"
     }
 }
