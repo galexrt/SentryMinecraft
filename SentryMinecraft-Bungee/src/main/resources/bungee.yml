@@ -1,3 +1,5 @@
 name: SentryMinecraft
 version: ${project.version}
 main: me.theminecoder.minecraft.sentry.SentryMinecraftBungeecord
+author: theminecoder and updated by galexrt
+description: Sentry exception proxy.

@@ -1,4 +1,6 @@
 name: SentryMinecraft
 version: ${project.version}
 main: me.theminecoder.minecraft.sentry.SentryMinecraftSpigot
-api-version: 1.13
+api-version: 1.19
+author: theminecoder and updated by galexrt
+description: Sentry exception proxy.

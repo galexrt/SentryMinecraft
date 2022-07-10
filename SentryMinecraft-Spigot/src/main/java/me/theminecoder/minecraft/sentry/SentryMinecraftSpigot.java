@@ -1,6 +1,5 @@
 package me.theminecoder.minecraft.sentry;
 
-import org.apache.commons.lang.UnhandledException;
 import org.bukkit.command.CommandException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -54,9 +53,6 @@ public final class SentryMinecraftSpigot extends JavaPlugin {
     private void handleException(Throwable cause) {
         Throwable e = cause;
         if (e.getCause() != null) { // Paper wraps the actual exception
-            e = e.getCause();
-        }
-        if (e instanceof UnhandledException && e.getCause() != null) {
             e = e.getCause();
         }
         if (e instanceof CommandException && e.getCause() != null) {
