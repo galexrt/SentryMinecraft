@@ -4,11 +4,11 @@
 
     <parent>
         <groupId>me.theminecoder.minecraft</groupId>
-        <artifactId>SentryMinecraft</artifactId>
+        <artifactId>sentryminecraft</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>SentryMinecraft-Bungee</artifactId>
+    <artifactId>sentryminecraft-spigot</artifactId>
 
     <build>
         <defaultGoal>clean package</defaultGoal>
@@ -50,23 +50,15 @@
         <!-- SentryMinecraft Common -->
         <dependency>
             <groupId>me.theminecoder.minecraft</groupId>
-            <artifactId>SentryMinecraft-Common</artifactId>
+            <artifactId>sentryminecraft-common</artifactId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Waterfall -->
+        <!-- Paper -->
         <dependency>
-            <groupId>io.github.waterfallmc</groupId>
-            <artifactId>waterfall-api</artifactId>
-            <version>1.19-R0.1-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.waterfallmc</groupId>
-            <artifactId>waterfall-api</artifactId>
-            <version>1.19-R0.1-SNAPSHOT</version>
-            <type>javadoc</type>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.19.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
