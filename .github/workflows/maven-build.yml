@@ -24,6 +24,8 @@ jobs:
         run: mvn --batch-mode --update-snapshots verify
 
       - name: Deploy to Github Package Registry
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn deploy
 
